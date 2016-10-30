@@ -27,14 +27,12 @@ using namespace std;
 class CipherType{
 private:
 //protected:
-	//int block_len;
 	int key_len;
 	vector<char> plain_text;
 	vector<char> enc_text;
 	vector<char> dec_text;
 	vector<char> ciph_key;
 protected:
-//public:
 	//Setters
 	void SetEncText(vector<char> e){ enc_text = e; }
 	void SetDecText(vector<char> d){ dec_text = d; }
@@ -203,9 +201,7 @@ void DES_Cipher::Decrypt()
 			DES_ecb_encrypt(&buf, &dec_block, &key, 0);
 			for (int j = 0; j < 8; j++){
 				dec_text_pad.push_back(dec_block[j]);
-				//buf[j] = 0;
 			}
-			//continue;
 		}
 		if (i != e_text.size()){
 			buf[i % 8] = e_text[i];
@@ -237,16 +233,6 @@ void DES_Cipher::Encrypt()
 
 	}
 	for (int i = 0; i <=text.size(); i++){
-		/*
-		if ((text.size()==i) && ((i%8)!=0)){//the last block
-			block_part = i % 8;//how many bytes there are
-			for (int j = 0; j < block_part; j++){
-				
-				cipher_text.push_back(0);
-			}
-			break;
-		}
-		*/
 		if (i % 8 == 0 && i>0){//if we have block of 64 bits
 			DES_ecb_encrypt(&buf, &cipher_block, &key, 1);
 			for (int j = 0; j < 8; j++){//copy new key
@@ -254,7 +240,6 @@ void DES_Cipher::Encrypt()
 				//buf[j] = 0;
 				
 			}
-			//continue;//to new iteration
 		}
 		if (i != text.size()){
 			buf[i % 8] = text[i];
@@ -279,7 +264,6 @@ void DES_Cipher::GenerateCipherKey()
 		}
 		Sleep(20);
 	} while (DES_set_key(&key_1, &key) < 0);
-	//DES_cblock userkey = { 0xde, 0xad, 0xbe, 0xef, 0xfe, 0xed, 0xf0, 0x0d };
 	if (DES_set_key(&key_1, &key) > 0){
 		for (int i = 0; i < 8; i++)
 			c_key.push_back(key_1[i]);
@@ -298,7 +282,6 @@ int DES_Cipher::PerformTest()
 	DES_cblock ciphertext;
 	DES_cblock buf;
 
-	//ERR_clear_error();
 	if (DES_set_key(&userkey, &key) < 0)
 		return 0;
 	DES_ecb_encrypt(&plaintext, &ciphertext, &key, 1);
@@ -312,24 +295,12 @@ int DES_Cipher::PerformTest()
 
 class AES_Cipher: public CipherType{
 private:
-	//vector<char> plain_text;
-	//vector<char> enc_text;
-	//vector<char> dec_text;
-	//vector<char> ciph_key;
-	//int key_len;
 	int b_part;
 protected:
 	void SetKeyLenAES(int ln){ SetKeyLen(ln); }
 	void GetKey(uint8_t *key);
-	//int GetKeyLen(){ return key_len; }
-	//void SetEncText(vector<char> e){ enc_text = e; }
-	//void SetDecText(vector<char> d){ dec_text = d; }
-	//vector<char> GetPlainText(){ return plain_text; }
-	//vector<char> GetEncText(){ return enc_text; }
 	void SetPaddingPart(int b_p){ b_part = b_p; }
 	int GetPaddingPart(){ return b_part; }
-	//void ReadFile(string file_name);
-	//void WriteToFile(string file_name);
 	void Encrypt();
 	void Decrypt();
 	void GenerateCipherKey();
@@ -370,10 +341,7 @@ void AES_Cipher::Decrypt()
 	vector<char> dec_text_pad;//decrypted text with padding
 	uint8_t key[16];
 	uint8_t input[16];
-	//uint8_t buf[16];
 	uint8_t dec_block[16];
-	//DES_cblock buf;
-	//DES_cblock cipher_block;
 	enc_text = GetEncText();
 	GetKey(key);
 	int block_part = GetPaddingPart();
@@ -382,10 +350,8 @@ void AES_Cipher::Decrypt()
 			AES128_ECB_decrypt(input, key, dec_block);
 			for (int j = 0; j < 16; j++){//copy new key
 				dec_text_pad.push_back(dec_block[j]);
-				//buf[j] = 0;
 
 			}
-			//continue;//to new iteration
 		}
 		if (i != enc_text.size()){
 			input[i % 16] = enc_text[i];
@@ -451,7 +417,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	d_ciph.EncryptDES();
 	d_ciph.DecryptDES();
 	d_ciph.WriteToFileDES("des_output.txt");
-	//d_ciph.PerformTest();
 	//Using OTP
 	int len;//text length
 	v_ciph.ReadFileOTP("input.txt");
